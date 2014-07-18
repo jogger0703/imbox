@@ -10,7 +10,10 @@ class Imbox(object):
         self.username = username
         self.password = password
         self.connection = self.server.connect(username, password)
+        self.fetch_callback = None
 
+    def set_fetch_callback(self, func):
+        self.fetch_callback = func
 
     def logout(self):
         self.connection.close()
@@ -27,6 +30,9 @@ class Imbox(object):
         raw_email = data[0][1]
 
         email_object = parse_email(raw_email)
+
+        if self.fetch_callback:
+            self.fetch_callback(email_object)
 
         return email_object
 
